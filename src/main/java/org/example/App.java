@@ -48,6 +48,7 @@ public class App {
     public static void getEmployees() {
         String REST_URI = "http://localhost:8091/RESTAPI/";
         Client client = ClientBuilder.newClient();
+
         String entity = client.target(REST_URI)
                 .request(MediaType.APPLICATION_JSON)
                 .header("some-header", "true")
