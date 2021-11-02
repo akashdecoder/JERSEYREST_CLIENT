@@ -1,13 +1,10 @@
 package org.example;
 
-import org.example.model.Employee;
-import org.glassfish.jersey.client.ClientConfig;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import org.example.service.CrudClient;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,23 +17,30 @@ public class App {
         int choice;
         String name;
         int age;
+        int id;
 
         while(true) {
-            System.out.println("1. Retrieve Employees\n2. Add Employee");
+            System.out.println("1. Retrieve Employees\n2. Add Employee\n3. Delete Employee\n4. Update Employee");
             choice = in.nextInt();
 
             switch(choice) {
                 case 1:
-                    getEmployees();
+                    CrudClient.getEmployee();
                     break;
                 case 2:
                     Random random = new Random();
-                    int id = random.nextInt(10000);
                     name = in.next();
                     age = in.nextInt();
-                    Response response = addEmployee(new Employee(id, name, age));
-                    System.out.println(response);
+                    CrudClient.addEmployee(name, age);
                     break;
+                case 3:
+                    id = in.nextInt();
+                    CrudClient.deleteEmployee(id);
+                case 4:
+                    id = in.nextInt();
+                    name = in.next();
+                    age = in.nextInt();
+                    CrudClient.updateEmployee(id, name, age);
                 default:
                     System.out.println("Wrong Choice");
 
@@ -45,24 +49,4 @@ public class App {
 
     }
 
-    public static void getEmployees() {
-        String REST_URI = "http://localhost:8091/RESTAPI/";
-        Client client = ClientBuilder.newClient();
-
-        String entity = client.target(REST_URI)
-                .request(MediaType.APPLICATION_JSON)
-                .header("some-header", "true")
-                .get(String.class);
-
-        System.out.println(entity);
-    }
-
-    public static Response addEmployee(Employee employee) {
-        String REST_URI = "http://localhost:8091/RESTAPI/create";
-        Client client = ClientBuilder.newClient();
-
-        return  client.target(REST_URI)
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(employee, MediaType.APPLICATION_XML));
-    }
 }
